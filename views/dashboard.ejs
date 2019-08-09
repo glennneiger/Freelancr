@@ -20,3 +20,53 @@
         </div>
       </nav>
 <p class="lead mb-3">Welcome <%= user.name %></p>
+
+<button id="clock_in"  class="btn btn-primary">Clock In</button>
+<button id="clock_out" class="btn btn-primary">Clock Out</button>
+<% if(user.clockedIn == true) { %>
+  <script>
+    document.getElementById("clock_in").disabled = true;
+  </script>
+<% } %>
+<% if(user.clockedIn == false) { %>
+  <script>
+    document.getElementById("clock_out").disabled = true;
+  </script>
+<% } %>
+
+<script>
+  
+  document.getElementById("clock_in").addEventListener("click", async _ => {
+    document.getElementById("clock_in").disabled = true;
+    fetch('/clockIn', {method: 'POST'})
+    .then(function(response) {
+      if(response.ok) {
+        console.log('Click was recorded');
+        
+        return;
+      }
+      throw new Error('Request failed.');
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+    
+  });
+  document.getElementById("clock_out").addEventListener("click", async _ => {
+    document.getElementById("clock_out").disabled = true;
+    fetch('/clockOut', {method: 'POST'})
+    .then(function(response) {
+      if(response.ok) {
+        console.log('Click was recorded');
+        
+        return;
+      }
+      throw new Error('Request failed.');
+    })
+    .catch(function(error) {
+      console.log(error);
+    });
+    
+  });
+</script>
+
