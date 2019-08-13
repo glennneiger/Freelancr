@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+ObjectId = require("mongodb").ObjectId
 const UserSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -20,7 +20,12 @@ const UserSchema = new mongoose.Schema({
     clockedIn: {
         type: Boolean,
         default: false
+    },
+    activePunchID: {
+        type: ObjectId,
+        default: new ObjectId("000000000000000000000000")
     }
+
 });
 
 const User = mongoose.model('User', UserSchema);

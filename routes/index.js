@@ -3,6 +3,7 @@ const router = express.Router();
 const {ensureAuthenticated} = require('../config/auth');
 const Punch = require('../models/Punch');
 const User = require('../models/User');
+ObjectId = require("mongodb").ObjectId
 
 //Welcome page
 router.get('/', (req, res) => res.render('welcome'));
@@ -26,21 +27,27 @@ router.post('/clockIn', (req, res) => {
         });
         User.updateOne(
             { email: req.user.email },
-            { $set: {clockedIn: true}},
+            { $set: {clockedIn: true,
+                     activePunchID: new ObjectId(newPunch._id)}},
+
             (err, res) => {
                 console.log("Document updated");
             }
 
         );
     });
+    req.flash('success_msg', 'Successfully clocked in.');
     
+
 });
 router.post('/clockOut', (req, res) => {
     console.log('made it here');
     console.log(req.user);
-    Punch.findOne({userID: req.user._id, is_complete: false}, (err, punch) => {
+    
+    Punch.findOne({_id: req.user.activePunchID}, (err, punch) => {
         Punch.updateOne(
-            {userID: req.user._id},
+            
+            {_id: req.user.activePunchID},
             { $set: {out_time: Date.now(),
                     time_total: Date.now()-punch.in_time,
                     is_complete: true}},
@@ -51,14 +58,14 @@ router.post('/clockOut', (req, res) => {
         )
         User.updateOne(
             { email: req.user.email },
-            { $set: {clockedIn: false}},
+            { $set: {clockedIn: false, activePunchID: null}},
             (err, res) => {
                 console.log("Document updated");
             }
 
         );
     });
-    
+    req.flash('success_msg', 'Successfully clocked out.');
 });
 
 module.exports = router;
