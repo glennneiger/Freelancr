@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
     },
     activePunchID: {
         type: ObjectId,
-        default: new ObjectId("000000000000000000000000")
+        default: null
     }
 
 });

@@ -13,7 +13,7 @@ router.get('/dashboard', ensureAuthenticated, (req, res) =>
 res.render('dashboard', {
     user: req.user
 }));
-router.post('/clockIn', (req, res) => {
+router.post('/clockIn', (req, res, next) => {
     console.log('made it here');
     console.log(req.user);
     User.findOne({email: req.user}, (err, user) => {
@@ -37,10 +37,10 @@ router.post('/clockIn', (req, res) => {
         );
     });
     req.flash('success_msg', 'Successfully clocked in.');
-    
+    next();
 
 });
-router.post('/clockOut', (req, res) => {
+router.post('/clockOut', (req, res, next) => {
     console.log('made it here');
     console.log(req.user);
     
@@ -66,6 +66,8 @@ router.post('/clockOut', (req, res) => {
         );
     });
     req.flash('success_msg', 'Successfully clocked out.');
+    next();
+    
 });
 
 module.exports = router;

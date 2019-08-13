@@ -1,7 +1,7 @@
 <h1 class="mt-4">Welcome to your Dashboard</h1>
-<% include ./partials/messages %>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <h1><img src="https://ulimidoes.com/wp-content/uploads/2018/07/Asset-8@2x.png" height="50" width="50"/></h1>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -21,7 +21,7 @@
         </div>
       </nav>
 <p class="lead mb-3">Welcome <%= user.name %></p>
-
+<% include ./partials/messages %>
 <button id="clock_in"  class="btn btn-primary">Clock In</button>
 <button id="clock_out" class="btn btn-primary">Clock Out</button>
 <% if(user.clockedIn == true) { %>
@@ -52,8 +52,9 @@
       console.log(error);
     });
     setTimeout( () => {
-      window.location.reload()
-    }, 130 );
+      window.location.reload();
+      
+    }, 300 );
   });
   document.getElementById("clock_out").addEventListener("click", async _ => {
     document.getElementById("clock_out").disabled = true;
@@ -61,18 +62,20 @@
     .then(function(response) {
       if(response.ok) {
         console.log('Click was recorded');
-        
+
         return;
       }
       throw new Error('Request failed.');
+
     })
     .catch(function(error) {
       console.log(error);
     });
   
     setTimeout( () => {
-      window.location.reload()
-    }, 130 );
+      window.location.reload();
+      
+    }, 300 );
   });
 </script>
 
