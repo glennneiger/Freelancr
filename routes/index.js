@@ -10,9 +10,15 @@ router.get('/', (req, res) => res.render('welcome'));
 
 //Dashboard
 router.get('/dashboard', ensureAuthenticated, (req, res) => 
-res.render('dashboard', {
-    user: req.user
-}));
+    res.render('dashboard', {
+        user: req.user
+    }
+));
+router.get('/reports', ensureAuthenticated, (req, res) => 
+    res.render('reports', {
+        user: req.user
+    }
+));
 router.post('/clockIn', (req, res, next) => {
     console.log('made it here');
     console.log(req.user);
