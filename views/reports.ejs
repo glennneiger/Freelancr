@@ -29,13 +29,13 @@
     <thead>
       <tr>
         <th scope="col"></th>
-        <th scope="col">Column heading</th>
-        <th scope="col">Column heading</th>
-        <th scope="col">Column heading</th>
-        <th scope="col">Column heading</th>
-        <th scope="col">Column heading</th>
-        <th scope="col">Column heading</th>
-        <th scope="col">Column heading</th>
+        <th scope="col" id="d1">Column heading</th>
+        <th scope="col" id="d2">Column heading</th>
+        <th scope="col" id="d3">Column heading</th>
+        <th scope="col" id="d4">Column heading</th>
+        <th scope="col" id="d5">Column heading</th>
+        <th scope="col" id="d6">Column heading</th>
+        <th scope="col" id="d7">Column heading</th>
 
       </tr>
     </thead>
@@ -55,17 +55,35 @@
       
     </tbody>
   </table>
+
 <script type="text/javascript">
-    var today = new Date();
-    var day = today.getDay();
     
-    function getMonday(d) {
-        d = new Date(d);
-        var day = d.getDay(),
-            diff = d.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-        return new Date(d.setDate(diff));
+    function dates(current) {
+        var week= new Array(); 
+        // Starting Monday not Sunday
+        current.setDate((current.getDate() - current.getDay() ));
+        for (var i = 0; i < 7; i++) {
+            week.push(
+                new Date(current)
+            ); 
+            current.setDate(current.getDate() +1);
+        }
+        return week; 
     }
+    var week = dates(new Date());
+    document.getElementById("d1").innerHTML = "Sunday "+week[0].getUTCMonth()+"/"+week[0].getUTCDate();
+    document.getElementById("d2").innerHTML = "Monday "+week[1].getUTCMonth()+"/"+week[1].getUTCDate();
+    document.getElementById("d3").innerHTML = "Tuesday "+week[2].getUTCMonth()+"/"+week[2].getUTCDate();
+    document.getElementById("d4").innerHTML = "Wednesday "+week[3].getUTCMonth()+"/"+week[3].getUTCDate();
+    document.getElementById("d5").innerHTML = "Thursday "+week[4].getUTCMonth()+"/"+week[4].getUTCDate();
+    document.getElementById("d6").innerHTML = "Friday "+week[5].getUTCMonth()+"/"+week[5].getUTCDate();
+    document.getElementById("d7").innerHTML = "Saturday "+week[6].getUTCMonth()+"/"+week[6].getUTCDate();
 
+    var userID = "<%=user._id%>";
+    console.log(userID);
 
+    
+    
 
 </script>
+

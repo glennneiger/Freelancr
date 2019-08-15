@@ -4,6 +4,8 @@ const {ensureAuthenticated} = require('../config/auth');
 const Punch = require('../models/Punch');
 const User = require('../models/User');
 ObjectId = require("mongodb").ObjectId
+var moment = require('moment');
+moment().format();
 
 //Welcome page
 router.get('/', (req, res) => res.render('welcome'));
@@ -15,8 +17,11 @@ router.get('/dashboard', ensureAuthenticated, (req, res) =>
     }
 ));
 router.get('/reports', ensureAuthenticated, (req, res) => 
+    
+    
     res.render('reports', {
-        user: req.user
+        user: req.user,
+        Punch: Punch
     }
 ));
 router.post('/clockIn', (req, res, next) => {
