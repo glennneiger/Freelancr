@@ -20,6 +20,7 @@
           </form>
         </div>
       </nav>
+<br>
 <h2>Time summary</h2>
 <br>
 <h4>Current week</h4>
@@ -42,25 +43,49 @@
     <tbody>
       <tr class="table-secondary">
         <th scope="row">Hours</th>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
-        <td>Column content</td>
+        <td id="c1">Column content</td>
+        <td id="c2">Column content</td>
+        <td id="c3">Column content</td>
+        <td id="c4">Column content</td>
+        <td id="c5">Column content</td>
+        <td id="c6">Column content</td>
+        <td id="c7">Column content</td>
       </tr>
       
       
       
     </tbody>
   </table>
-
+<div class="d-flex justify-content-end">
+  <h4><u>Hours total</u></h4>
+</div>
+<div class="d-flex justify-content-end">
+  <h4 id="hours_total"></h4>
+</div>
+<div class="modal" id="editModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script type="text/javascript">
     
     function dates(current) {
         var week= new Array(); 
-        // Starting Monday not Sunday
+        // Starting Sunday
         current.setDate((current.getDate() - current.getDay() ));
         for (var i = 0; i < 7; i++) {
             week.push(
@@ -70,20 +95,67 @@
         }
         return week; 
     }
+    //fill table with current week's dates
     var week = dates(new Date());
-    document.getElementById("d1").innerHTML = "Sunday "+week[0].getUTCMonth()+"/"+week[0].getUTCDate();
-    document.getElementById("d2").innerHTML = "Monday "+week[1].getUTCMonth()+"/"+week[1].getUTCDate();
-    document.getElementById("d3").innerHTML = "Tuesday "+week[2].getUTCMonth()+"/"+week[2].getUTCDate();
-    document.getElementById("d4").innerHTML = "Wednesday "+week[3].getUTCMonth()+"/"+week[3].getUTCDate();
-    document.getElementById("d5").innerHTML = "Thursday "+week[4].getUTCMonth()+"/"+week[4].getUTCDate();
-    document.getElementById("d6").innerHTML = "Friday "+week[5].getUTCMonth()+"/"+week[5].getUTCDate();
-    document.getElementById("d7").innerHTML = "Saturday "+week[6].getUTCMonth()+"/"+week[6].getUTCDate();
-
-    var userID = "<%=user._id%>";
-    console.log(userID);
-
+    week.forEach(element => {
+      element.setHours(0,0,0,0);
+    });
+    var daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    for( i=1; i<8; i++){
+      var dString = "d"+i;
+      document.getElementById(dString).innerHTML = daysOfWeek[i-1]+" "+week[i-1].getUTCMonth()+"/"+week[i-1].getUTCDate();
+    }
+    //decode variable passed from index.js
+    function htmlDecode(input){
+      var e = document.createElement('div');
+      e.innerHTML = input;
+      return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+    }
+    var punches = JSON.parse(htmlDecode("<%= JSON.stringify(punches) %>"));
+    var weekPunches = {}
     
-    
+    week.forEach(day => {
+      weekPunches[day] = new Array();
+        punches.forEach(element => {
+          var EOD = new Date(day);
+          EOD.setHours(23,59,59,999);
+          if(Date.parse(element.in_time) >= day && Date.parse(element.out_time) <= EOD) {
+            weekPunches[day].push(element);  
+          }
+        });
+    });
 
+    var weeklyHours = 0;
+    for( i=1; i<8; i++){
+      var dailyHours = 0;
+      
+      var cString = "c"+i;
+      weekPunches[Object.keys(weekPunches)[i-1]].forEach(day => {
+        dailyHours += day.time_total;
+        
+        console.log(dailyHours);
+      });
+      weeklyHours += dailyHours;
+      
+      document.getElementById(cString).innerHTML = (dailyHours / 360000).toFixed(2);
+    }
+    document.getElementById("hours_total").innerHTML = (weeklyHours / 360000).toFixed(2);
+    
+</script>
+
+<script>
+  var modal = document.getElementById("editModal");
+  document.getElementById("c1").onclick() = () => {
+    modal.style.display = "block";
+  }
+  var span = document.getElementsByClassName("close")[0];
+  span.onclick = function() {
+    modal.style.display = "none";
+  }
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
 </script>
 

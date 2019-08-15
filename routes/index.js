@@ -16,14 +16,19 @@ router.get('/dashboard', ensureAuthenticated, (req, res) =>
         user: req.user
     }
 ));
-router.get('/reports', ensureAuthenticated, (req, res) => 
+router.get('/reports', ensureAuthenticated, (req, res) => {
     
-    
-    res.render('reports', {
-        user: req.user,
-        Punch: Punch
+    Punch.find({
+        userID: req.user._id
+    }, (err, punches) => {
+        res.render('reports', {
+            user: req.user,
+            punches: punches
+        })
     }
-));
+    )
+    
+});
 router.post('/clockIn', (req, res, next) => {
     console.log('made it here');
     console.log(req.user);
