@@ -4,8 +4,9 @@ const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
-
 const app = express();
+const http = require('http').createServer(app);
+var io = require('socket.io')(http);
 
 //passport config
 require('./config/passport')(passport);
@@ -53,6 +54,16 @@ app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8080;
 
-app.listen(PORT, console.log(`Server started on ${PORT}`));
+io.on('connection', function(socket){
+    console.log('a user connected');
+    socket.on('date selected', function(date) {
+        console.log(date);
+        io.emit('date selected', date);
+    });
+});
+
+
+
+http.listen(PORT, console.log(`Server started on ${PORT}`));

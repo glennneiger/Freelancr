@@ -51,20 +51,21 @@
         <td id="c6">Column content</td>
         <td id="c7">Column content</td>
       </tr>
-      
-      
-      
     </tbody>
   </table>
+
 <div class="d-flex justify-content-end">
   <h4><u>Hours total</u></h4>
 </div>
+
 <div class="d-flex justify-content-end">
   <h4 id="hours_total"></h4>
 </div>
+
 <div class="d-flex justify-content-end">
   <button id="editTime">Edit hours</button>
 </div>
+
 <div class="modal" id="editModal">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -75,7 +76,23 @@
         </button>
       </div>
       <div class="modal-body">
-        <p>Modal body text goes here.</p>
+        <form id="editForm" action="">
+          <div class="form-group">
+            <label for="exampleSelect1">Select Day</label>
+            <select class="form-control" id="exampleSelect1">
+              <option>--Select Day--</option>
+              <option>Sunday</option>
+              <option>Monday</option>
+              <option>Tuesday</option>
+              <option>Thursday</option>
+              <option>Wednesday</option>
+              <option>Friday</option>
+              <option>Saturday</option>
+            </select>
+            <br>
+            <ul id="pnchs"></ul>
+          </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary">Save changes</button>
@@ -84,8 +101,10 @@
     </div>
   </div>
 </div>
+
 <script type="text/javascript">
-    
+
+    //get a list of 7 Dates, starting on Sunday
     function dates(current) {
         var week= new Array(); 
         // Starting Sunday
@@ -98,38 +117,48 @@
         }
         return week; 
     }
+
     //fill table with current week's dates
     var week = dates(new Date());
     week.forEach(element => {
       element.setHours(0,0,0,0);
     });
+
     var daysOfWeek = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
     for( i=1; i<8; i++){
       var dString = "d"+i;
       document.getElementById(dString).innerHTML = daysOfWeek[i-1]+" "+week[i-1].getUTCMonth()+"/"+week[i-1].getUTCDate();
     }
+
     //decode variable passed from index.js
     function htmlDecode(input){
       var e = document.createElement('div');
       e.innerHTML = input;
       return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
     }
+
     var punches = JSON.parse(htmlDecode("<%= JSON.stringify(punches) %>"));
     var weekPunches = {}
     
+    //create map of punches and days of the week
     week.forEach(day => {
+      
       weekPunches[day] = new Array();
-        punches.forEach(element => {
-          var EOD = new Date(day);
-          EOD.setHours(23,59,59,999);
-          if(Date.parse(element.in_time) >= day && Date.parse(element.out_time) <= EOD) {
-            weekPunches[day].push(element);  
-          }
+      punches.forEach(element => {
+
+        var EOD = new Date(day);
+        EOD.setHours(23,59,59,999);
+        if(Date.parse(element.in_time) >= day && Date.parse(element.out_time) <= EOD) {
+          weekPunches[day].push(element);  
+        }
         });
     });
 
     var weeklyHours = 0;
+    //fill calander with time values
     for( i=1; i<8; i++){
+
       var dailyHours = 0;
       
       var cString = "c"+i;
@@ -154,6 +183,7 @@
   document.getElementById("close").addEventListener("click", async __ => {
     modal.style.display = 'none';
   })
+  
   var span = document.getElementsByClassName("close")[0];
   span.onclick = function() {
     modal.style.display = "none";
@@ -163,5 +193,23 @@
       modal.style.display = "none";
     }
   }
+</script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+  $(function () {
+    var socket = io();
+    $('form').change(function(e) {
+      e.preventDefault();
+      socket.emit('date selected', $('#exampleSelect1').val());
+      return false;
+    });
+    socket.on('date selected', function(date) {
+     
+      
+          
+    });
+  });
 </script>
 
