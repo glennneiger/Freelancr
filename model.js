@@ -95,7 +95,7 @@ var clientModel = require('./models/Client'),
                   callback(null, user);
                 }
                 else{
-                  return false;
+                  callback(null, false);
                 }
             });
         })

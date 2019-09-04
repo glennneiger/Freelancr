@@ -4,11 +4,15 @@ const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
+const bodyParser = require('body-parser');
 var path = require('path');
-const app = express(),
+const app = express().use(bodyParser.json()),
             OAuth2Server = require('oauth2-server'),
             Request = OAuth2Server.Request,
             Response = OAuth2Server.Response;
+
+//Dialogflow
+const dflowApp = require('./dialogflow/api');
 
 //passport config
 require('./config/passport')(passport);
@@ -69,9 +73,11 @@ app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.all('/oauth/token', obtainToken);
 
-app.get('/test', authenticateRequest, function(req, res) {
+app.get('/auth', authenticateRequest, function(req, res) {
 	res.send('Congratulations, you are in a secret area!');
 });
+
+app.post('/webhook', dflowApp);
 
 app.set('views', path.join(__dirname, 'views')); 
 const PORT = process.env.PORT || 5000;
