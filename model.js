@@ -55,7 +55,6 @@ var clientModel = require('./models/Client'),
     };
     
     var getClient = function(clientId, clientSecret) {
-    
         return clientModel.findOne({
             clientId: clientId,
             clientSecret: clientSecret
@@ -63,7 +62,7 @@ var clientModel = require('./models/Client'),
     };
     
     var saveToken = function(token, client, user) {
-    
+        console.log("Is it thiss?");
         token.client = {
             id: client.clientId
         };
@@ -83,7 +82,7 @@ var clientModel = require('./models/Client'),
      * Method used only by password grant type.
      */
     
-    var getUser = function(email, password) {
+    var getUser = function(email, password, callback) {
         console.log("got Here");
     
         userModel.findOne({
@@ -93,13 +92,16 @@ var clientModel = require('./models/Client'),
             bcrypt.compare(password, user.password, (err, isMatch) => {
                 if(err) throw err;
                 if(isMatch) {
-                  return done(null, user);
+                  callback(null, user);
                 }
                 else{
-                  return done(null, false, {message: 'Password is incorrect'});
+                  return false;
                 }
             });
         })
+        .catch(err => {
+            console.log(err);
+        });
     };
     
     /*

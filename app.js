@@ -18,7 +18,10 @@ const db = require('./config/keys').MongoURI;
 
 //Connect to DB
 console.log("test");
-mongoose.connect(db, { useNewUrlParser: true })
+mongoose.connect(db, { 
+    useNewUrlParser: true,
+    useCreateIndex: true
+ })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
 
@@ -76,16 +79,15 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server started on ${PORT}`));
 
 function obtainToken(req, res) {
-
+   
 	var request = new Request(req);
 	var response = new Response(res);
-
+    
 	return app.oauth.token(request, response)
 		.then(function(token) {
-
 			res.json(token);
 		}).catch(function(err) {
-
+            console.log(err);
 			res.status(err.code || 500).json(err);
 		});
 }
@@ -100,7 +102,7 @@ function authenticateRequest(req, res, next) {
 
 			next();
 		}).catch(function(err) {
-
+            console.log("here?");
 			res.status(err.code || 500).json(err);
 		});
 }
