@@ -77,8 +77,6 @@ app.get('/auth', authenticateRequest, function(req, res) {
 	res.send('Congratulations, you are in a secret area!');
 });
 
-const PORT = process.env.PORT || 8080;
-
 app.post('/webhook', dflowApp);
 
 app.set('views', path.join(__dirname, 'views')); 
