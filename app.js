@@ -4,9 +4,15 @@ const mongoose = require('mongoose');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
-const app = express();
-const http = require('http').createServer(app);
-var io = require('socket.io')(http);
+const bodyParser = require('body-parser');
+var path = require('path');
+const app = express().use(bodyParser.json()),
+            OAuth2Server = require('oauth2-server'),
+            Request = OAuth2Server.Request,
+            Response = OAuth2Server.Response;
+
+//Dialogflow
+const dflowApp = require('./dialogflow/api');
 
 //passport config
 require('./config/passport')(passport);
@@ -15,12 +21,25 @@ require('./config/passport')(passport);
 const db = require('./config/keys').MongoURI;
 
 //Connect to DB
-mongoose.connect(db, { useNewUrlParser: true })
+console.log("test");
+mongoose.connect(db, { 
+    useNewUrlParser: true,
+    useCreateIndex: true
+ })
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
 
+//oAuth2.0
+app.oauth = new OAuth2Server({
+	model: require('./model'),
+	accessTokenLifetime: 60 * 60,
+    allowBearerTokensInQueryString: true,
+    debug: true
+});
+
 //EJS
 app.use(expressLayouts);
+app.engine('ejs', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
 //Bodyparser
@@ -52,18 +71,46 @@ app.use((req, res, next) => {
 //ROUTES
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
+app.all('/oauth/token', obtainToken);
 
+app.get('/auth', authenticateRequest, function(req, res) {
+	res.send('Congratulations, you are in a secret area!');
+});
 
 const PORT = process.env.PORT || 8080;
 
-io.on('connection', function(socket){
-    console.log('a user connected');
-    socket.on('date selected', function(date) {
-        console.log(date);
-        io.emit('date selected', date);
-    });
-});
+app.post('/webhook', dflowApp);
 
+app.set('views', path.join(__dirname, 'views')); 
+const PORT = process.env.PORT || 5000;
 
+app.listen(PORT, console.log(`Server started on ${PORT}`));
 
-http.listen(PORT, console.log(`Server started on ${PORT}`));
+function obtainToken(req, res) {
+   
+	var request = new Request(req);
+	var response = new Response(res);
+    
+	return app.oauth.token(request, response)
+		.then(function(token) {
+			res.json(token);
+		}).catch(function(err) {
+            console.log(err);
+			res.status(err.code || 500).json(err);
+		});
+}
+
+function authenticateRequest(req, res, next) {
+
+	var request = new Request(req);
+	var response = new Response(res);
+
+	return app.oauth.authenticate(request, response)
+		.then(function(token) {
+
+			next();
+		}).catch(function(err) {
+            console.log("here?");
+			res.status(err.code || 500).json(err);
+		});
+}

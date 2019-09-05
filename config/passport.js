@@ -1,6 +1,9 @@
 const LocalStrategy = require('passport-local').Strategy;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const BasicStrategy = require('passport-http').BasicStrategy;
+const ClientPasswordStrategy = require('passport-oauth2-client-password').Strategy;
+const BearerStrategy = require('passport-http-bearer').Strategy;
 
 //Load user model
 const User = require('../models/User');
@@ -14,7 +17,7 @@ module.exports = function(passport) {
             User.findOne({ email: email})
               .then(user => {
                   if(!user) {
-                      return done(null, false, { message: 'Email is not registered. Please sign up to log in.'});
+                      return done(null, false, {message: 'Email is not registered. Please sign up to log in.'});
                   }
 
                   //Match password
