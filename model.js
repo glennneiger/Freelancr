@@ -43,10 +43,6 @@ var clientModel = require('./models/Client'),
         });
     }
 
-
-
-
-
     var getAccessToken = function(token) {
 
         return tokenModel.findOne({
@@ -62,7 +58,6 @@ var clientModel = require('./models/Client'),
     };
     
     var saveToken = function(token, client, user) {
-        console.log("Is it thiss?");
         token.client = {
             id: client.clientId
         };
@@ -83,8 +78,6 @@ var clientModel = require('./models/Client'),
      */
     
     var getUser = function(email, password, callback) {
-        console.log("got Here");
-    
         userModel.findOne({
             email: email
         })

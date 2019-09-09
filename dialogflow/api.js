@@ -34,7 +34,6 @@ app.fallback((conv) => {
 });
 
 app.catch((conv, error) => {
-    console.error(error);
     conv.ask('I encountered a glitch. Can you say that again?');
 });
 

@@ -93,7 +93,6 @@ function obtainToken(req, res) {
 		.then(function(token) {
 			res.json(token);
 		}).catch(function(err) {
-            console.log(err);
 			res.status(err.code || 500).json(err);
 		});
 }
@@ -105,10 +104,8 @@ function authenticateRequest(req, res, next) {
 
 	return app.oauth.authenticate(request, response)
 		.then(function(token) {
-
 			next();
 		}).catch(function(err) {
-            console.log("here?");
 			res.status(err.code || 500).json(err);
 		});
 }

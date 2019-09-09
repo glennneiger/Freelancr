@@ -2,12 +2,15 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const passport = require('passport');
+const OAuth2Server = require('oauth2-server')
 
 //User model
 const User = require('../models/User');
 
 //Login Page
 router.get('/login', (req, res) => res.render('login'));
+
+router.get('/googleLogin', (req, res) => res.render('googleLogin'));
 
 //Register Page
 router.get('/register', (req, res) => res.render('register'));
@@ -80,11 +83,16 @@ router.post('/register', (req, res) => {
 
 // Login handle
 router.post('/login', (req, res, next) => {
+
     passport.authenticate('local', {
         successRedirect: '/dashboard',
         failureRedirect: '/users/login',
         failureFlash: true
     })(req, res, next);
+});
+
+router.post('/googleLogin', (req, res, next) => {
+    passport.authenticate('oauth2');
 });
 
 //Logout handle
